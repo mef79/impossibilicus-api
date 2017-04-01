@@ -6,6 +6,10 @@ from flask_pymongo import PyMongo
 app = Flask(__name__)
 mongo = PyMongo(app)
 
+@app.route('/')
+def confirm_running():
+	return 'The app is running'
+
 @app.route('/story', methods=['POST'])
 def story():
 	return save(request)
