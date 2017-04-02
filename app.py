@@ -5,6 +5,11 @@ from flask import Flask, request, jsonify, abort, Response
 from pymongo import MongoClient
 
 app = Flask(__name__)
+uri = os.getenv('MONGODB_URI')
+username = os.getenv('MONGO_USERNAME')
+password = os.getenv('MONGO_PASSWORD')
+client = MongoClient(uri)
+story_collection = client[username].story
 
 @app.route('/')
 def confirm_running():
@@ -67,9 +72,4 @@ def response(message, code):
 	return response
 
 if __name__ == '__main__':
-	uri = os.getenv('MONGODB_URI')
-	username = os.getenv('MONGO_USERNAME')
-	password = os.getenv('MONGO_PASSWORD')
-	client = MongoClient(uri)
-	story_collection = client[username].story
 	app.run()
