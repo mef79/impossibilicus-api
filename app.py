@@ -5,10 +5,6 @@ from flask_pymongo import PyMongo
 
 app = Flask(__name__)
 mongo = PyMongo(app)
-env_config = {
-	'MONGO_URI': os.getenv('MONGODB_URI')
-}
-app.config.from_object(env_config)
 
 @app.route('/')
 def confirm_running():
@@ -69,4 +65,12 @@ def response(message, code):
 	return response
 
 if __name__ == '__main__':
+	env_config = {
+		'MONGO_URI': os.getenv('MONGODB_URI')
+	}
+	with open('config.cfg', 'w') as config_file:
+		for key in env_config:
+			config_file.write(key + '="' + env_config[key] + '"')
+	app.config.from_pyfile('config.cfg')
+	print app.config
 	app.run()

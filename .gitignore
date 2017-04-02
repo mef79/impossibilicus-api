@@ -4,3 +4,6 @@
 # Python
 *.pyc
 /venv
+
+# environment-specific config
+*.cfg
