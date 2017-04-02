@@ -1,10 +1,9 @@
 import os
 import sqlite3
 from flask import Flask, request, jsonify, abort, Response
-from flask_pymongo import PyMongo
+from pymongo import MongoClient
 
 app = Flask(__name__)
-mongo = PyMongo(app)
 
 @app.route('/')
 def confirm_running():
@@ -16,7 +15,8 @@ def story():
 
 @app.route('/story/<name>', methods=['GET', 'PUT'])
 def get_story(name):
-	result = mongo.db.story.find_one({"name":name})
+	print story
+	result = story.find_one({"name":name})
 	if result:
 		if request.method == 'GET':
 			result['_id'] = str(result['_id']) # ObjectId is not serializable
@@ -34,7 +34,7 @@ def save(request):
 	if not validate(data):
 		return response('Invalid input', 400)
 
-	result = mongo.db.story.insert_one(data)
+	result = story.insert_one(data)
 	return str(result.inserted_id)
 
 def update(name, request):
@@ -42,7 +42,7 @@ def update(name, request):
 	if not validate(data):
 		return response('Invalid input', 400)
 
-	result = mongo.db.story.update_one(
+	result = story.update_one(
 		{'name': name},
 		{
 			'$set': {
@@ -65,12 +65,9 @@ def response(message, code):
 	return response
 
 if __name__ == '__main__':
-	env_config = {
-		'MONGO_URI': os.getenv('MONGODB_URI')
-	}
-	with open('config.cfg', 'w') as config_file:
-		for key in env_config:
-			config_file.write(key + '="' + env_config[key] + '"')
-	app.config.from_pyfile('config.cfg')
-	print app.config
+	uri = os.getenv('MONGODB_URI')
+	username = os.getenv('MONGO_USERNAME')
+	password = os.getenv('MONGO_PASSWORD')
+	client = MongoClient(uri)
+	story = client[username].story
 	app.run()
