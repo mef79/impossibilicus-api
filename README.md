@@ -16,3 +16,6 @@ This is the simplest possible API to interact with the UI (that will soon be com
 - Start the API with `python app.py`
 - Confirm that it is running by accessing [`http://localhost:5000/`](http://localhost:5000/)
 - Use any REST client to make API calls (I use [Insomnia](https://insomnia.rest/))
+
+## Deploying
+- Application is automatically deployed on Heroku when a new commit is pushed to master
