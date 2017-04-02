@@ -1,4 +1,5 @@
 import os
+import sys
 import sqlite3
 from flask import Flask, request, jsonify, abort, Response
 from pymongo import MongoClient
@@ -16,6 +17,7 @@ def story():
 @app.route('/story/<name>', methods=['GET', 'PUT'])
 def get_story(name):
 	print story
+	sys.stdout.flush()
 	result = story.find_one({"name":name})
 	if result:
 		if request.method == 'GET':
