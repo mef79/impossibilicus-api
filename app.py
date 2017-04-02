@@ -18,7 +18,7 @@ def story():
 def get_story(name):
 	print story
 	sys.stdout.flush()
-	result = story.find_one({"name":name})
+	result = story_collection.find_one({"name":name})
 	if result:
 		if request.method == 'GET':
 			result['_id'] = str(result['_id']) # ObjectId is not serializable
@@ -36,7 +36,7 @@ def save(request):
 	if not validate(data):
 		return response('Invalid input', 400)
 
-	result = story.insert_one(data)
+	result = story_collection.insert_one(data)
 	return str(result.inserted_id)
 
 def update(name, request):
@@ -71,5 +71,5 @@ if __name__ == '__main__':
 	username = os.getenv('MONGO_USERNAME')
 	password = os.getenv('MONGO_PASSWORD')
 	client = MongoClient(uri)
-	story = client[username].story
+	story_collection = client[username].story
 	app.run()
