@@ -15,9 +15,12 @@ story_collection = client[username].story
 def confirm_running():
 	return 'The app is running'
 
-@app.route('/story', methods=['POST'])
+@app.route('/story', methods=['POST', 'GET'])
 def story():
-	return save(request)
+	if request.method == 'POST':
+		return save(request)
+	else:
+		return get_all()
 
 @app.route('/story/<name>', methods=['GET', 'PUT'])
 def get_story(name):
@@ -62,6 +65,12 @@ def update(name, request):
 	if result.matched_count > 0:
 		return response('OK', 200)
 	return response('Update failed', 500)
+
+def get_all():
+	stories = list(story_collection.find())
+	for story in stories:
+		story['_id'] = str(story['_id'])
+	return jsonify(stories)
 
 def validate(data):
 	return 'name' in data and 'nodes' in data and 'links' in data
