@@ -1,6 +1,10 @@
 # proj-api
 This is the simplest possible API to interact with the UI (that will soon be commited) in [proj](https://github.com/mef79/proj/)
 
+## Documentation of Libraries Used
+- [Flask](http://flask.pocoo.org/)
+- [Flask-RESTful](https://flask-restful.readthedocs.io/en/0.3.5/) - library that adds helpful REST conventions to Flask
+
 ## Requirements
 - Python 2.7
 - Python's `pip` library
