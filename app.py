@@ -1,84 +1,29 @@
 import os
 import sys
-import sqlite3
-from flask import Flask, request, jsonify, abort, Response
+from flask import Flask
 from pymongo import MongoClient
+from flask_restful import Api
+from dao import Dao
+from resources import *
+
+# imports from other files
+from errors import NotFoundError, UpdateError
+from resources import Home, Story, StoryList
 
 app = Flask(__name__)
+api = Api(app)
 uri = os.getenv('MONGODB_URI')
 username = os.getenv('MONGO_USERNAME')
-password = os.getenv('MONGO_PASSWORD')
 client = MongoClient(uri)
 story_collection = client[username].story
+dao = Dao(story_collection)
 
-@app.route('/')
-def confirm_running():
-	return 'The app is running'
 
-@app.route('/story', methods=['POST', 'GET'])
-def story():
-	if request.method == 'POST':
-		return save(request)
-	else:
-		return get_all()
-
-@app.route('/story/<name>', methods=['GET', 'PUT'])
-def get_story(name):
-	print story
-	sys.stdout.flush()
-	result = story_collection.find_one({"name":name})
-	if result:
-		if request.method == 'GET':
-			result['_id'] = str(result['_id']) # ObjectId is not serializable
-			return jsonify(result)
-		else:
-			return update(name, request)
-
-	else: # query returned no results
-		return resonse('Not found', 404)
-
-def save(request):
-	data = request.get_json()
-
-	# 400 if the request
-	if not validate(data):
-		return response('Invalid input', 400)
-
-	result = story_collection.insert_one(data)
-	return str(result.inserted_id)
-
-def update(name, request):
-	data = request.get_json()
-	if not validate(data):
-		return response('Invalid input', 400)
-
-	result = story.update_one(
-		{'name': name},
-		{
-			'$set': {
-				'name': data['name'],
-				'nodes': data['nodes'],
-				'links': data['links']
-			}
-		}
-	)
-	if result.matched_count > 0:
-		return response('OK', 200)
-	return response('Update failed', 500)
-
-def get_all():
-	stories = list(story_collection.find())
-	for story in stories:
-		story['_id'] = str(story['_id'])
-	return jsonify(stories)
-
-def validate(data):
-	return 'name' in data and 'nodes' in data and 'links' in data
-
-def response(message, code):
-	response = Response(message)
-	response.status_code = code
-	return response
+api.add_resource(Home, '/')
+api.add_resource(Story, '/story', '/story/<string:name>',
+	resource_class_kwargs={'dao':dao})
+api.add_resource(StoryList, '/stories',
+	resource_class_kwargs={'dao':dao})
 
 if __name__ == '__main__':
 	app.run()
