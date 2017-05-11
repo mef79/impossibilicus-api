@@ -13,12 +13,16 @@ class Story(Resource):
 
 	def post(self):
 		try:
+			print(request.get_json())
 			data = validate(request.get_json())
 			result = self.dao.save(data)
 			return str(result.inserted_id)
 
 		except AssertionError:
 			return error('Invalid input'), 400
+
+		except AlreadyExistsError as e:
+			return error(str(e)), 400
 
 	def get(self, name):
 		try:
