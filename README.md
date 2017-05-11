@@ -25,3 +25,7 @@ This is the simplest possible API to interact with the UI (that will soon be com
 
 ## Deploying
 - Application is automatically deployed on Heroku when a new commit is pushed to master
+
+## MongoDB Commands
+- Connect (requires Mongo installed): `mongo ds147510.mlab.com:47510/database_name -u username -p password`
+- Empty out a collection ("story"): `db.story.remove({})`
