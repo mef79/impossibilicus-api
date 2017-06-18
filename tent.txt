@@ -1,0 +1,18 @@
+8:13 a.m., local time. You awaken suddenly in a crude lean-to, wan sunlight and fetid water leaking on to your face through the plastic tarp that forms the roof of the shack. [All text that denotes a change in location or action, including the beginning of conversations but not every exchange within those conversations, should be timestamped.]
+
+
+* What? Where am I?
+   * Current location: [latitude/longitude], city of Craylea, within the province of [name], city-state of [name]. More specifically, you are in the tent city lying on the outskirts of the anomaly colloquially referrred to as the Craylea Mar. // Even more specifically, you’re directly underneath falling water, which, according to my calculations, has a 63% chance of containing human waste material. I strongly recommend you change position, at minimum.
+      * Move away from the water.
+      * Go outside the tent.
+* Huh? What’s going on?
+   * You’re currently lying in a filthy bedroll in the tent city on the outskirts of the anomaly colloquially referred to as the Craylea Mar. // And you have filthy water dripping onto the general vicinity of the mucous membranes of your nose and mouth. Strongly recommend a change of position.
+      * Move away from the water.
+      * Go outside the tent.
+* But… How did I get here?
+   * Bullet train from [city name], followed by 28.6 km of hitchhiking and finally 1.4 km of bipedal locomotion. A kindly vagrant who resides in this tent city directed you to this vacant tent. // Speaking of motion, I strongly recommend you use those faculties now, as you are getting soaked, and that water is less than clean, if you catch my meaning.
+      * Move away from the water.
+      * Go outside the tent.
+
+
+Excellent. Now, how may I assist you today?
