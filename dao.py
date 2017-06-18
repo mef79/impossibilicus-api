@@ -7,8 +7,6 @@ class Dao:
 
 	def save(self, data):
 		exists = self.collection.find_one({"name":data['name']})
-		print 'exists: '
-		print exists
 		if exists:
 			raise AlreadyExistsError('Story with name \'' + data['name'] + '\' already exists')
 		return self.collection.insert_one(data)
