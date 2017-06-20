@@ -26,6 +26,7 @@ class Story(Resource):
 
 	def get(self, name):
 		try:
+			# return flask.make_response('test')
 			result = self.dao.get_story({"name":name})
 			result['_id'] = str(result['_id']) # ObjectId is not serializable
 			return jsonify(result)
@@ -54,3 +55,20 @@ class StoryList(Resource):
 
 	def get(self):
 		return self.dao.get_all()
+
+class StoryImport(Resource):
+	def __init__(self, **kwargs):
+		self.dao = kwargs['dao']
+
+	def post(self):
+		try:
+			print (request.files)
+			assert len(request.files) == 1
+			assert len(request.files.getlist('file')) == 1
+			self.dao.import_story(request.files.get('file'))
+
+		except AssertionError:
+			if len(request.files.getlist('file')) == 0:
+				return error('No file uploaded'), 400
+			else:
+				return error('Can only upload one file'), 400
