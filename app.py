@@ -35,7 +35,7 @@ def main():
 		return
 
 	try:
-		with Timeout(3):
+		with Timeout(5):
 			client.admin.command('ismaster')
 	except Timeout.Timeout:
 		print ('Connection to MongoDB failed, check MONGODB_URI environment variable')
@@ -49,7 +49,7 @@ def main():
 		resource_class_kwargs={'dao':dao})
 	api.add_resource(StoryList, '/stories',
 		resource_class_kwargs={'dao':dao})
-	api.add_resource(StoryImport, '/storyImport',
+	api.add_resource(StoryImport, '/storyImport/<string:name>',
 		resource_class_kwargs={'dao':dao})
 	app.run()
 

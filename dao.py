@@ -2,7 +2,6 @@ from flask import jsonify
 from errors import *
 import textract
 from werkzeug import secure_filename, FileStorage
-import pprint
 import os
 from link import Link
 from node import Node
@@ -43,83 +42,88 @@ class Dao:
 			story['_id'] = str(story['_id'])
 		return jsonify(stories)
 
-	def import_story(self, file):
+	def import_story(self, title, file):
+		# get sanitized file name
 		name = secure_filename(file.filename)
-		print (name)
+
+		# save the file in the temp directory so it can be processed
 		target = os.path.join('/tmp/', name)
 		file.save(target)
 		extracted = textract.process(target).decode(encoding='UTF-8')
-		lines = [line for line in extracted.split('\n') if len(line) > 0]
-		pp = pprint.PrettyPrinter(indent=4)
-		pp.pprint(lines)
+
+		# all the lines of the file
+		lines = [line for line in extracted.split('\n')]
+
+		# strip whitespace and empty lines
+		clean_lines = [line.rstrip() for line in lines if len(line.rstrip()) > 0]
 
 		node_counter = 0
 		link_counter = 0
 		nodes = []
 		links = []
-		current_type = 'node'
+
+		# links that are waiting for the next node
 		links_to_link = []
+
+		# links that are waiting for the next non-indented node
 		childless_links = []
 
-		for line in lines:
+		for line in clean_lines:
 			# if this has no bullet/indent, it is actually a node
 			if line[0] is not '*' and line[0] is not ' ':
 				current_type = 'node'
-				indentation_level = 0
+				indent_level = 0
 
 			# one indent - is link
 			elif line[0] is '*':
 				current_type = 'link'
-				indentation_level = 1
+				indent_level = 1
 				line = line[1:]
 
 			elif line[0:4] == '   *':
 				current_type = 'node'
-				indentation_level = 2
+				indent_level = 2
 				line = line[5:]
 
 			elif line[0:7] == '      *':
 				current_type = 'link'
-				indentation_level = 3
+				indent_level = 3
 				line = line[8:]
 
 			if current_type == 'node':
-				print ('adding node for: "' + line[:40] + '..."')
 				node = Node(**{
 					'id': 'node-' + str(node_counter),
 					'text': line,
-					'indentation_level': indentation_level
+					'indent_level': indent_level
 				})
 				node_counter += 1
 				nodes.append(node)
 
-				print ('links that are currently waiting:')
-				pp.pprint(links_to_link)
 				# check all links that are waiting for their target
 				for link in links_to_link:
 					# if this node is more indented, then this node is their target
-					if link.indentation_level == node.indentation_level - 1:
-						print ('this node is the target for (' + link.text + ')')
+					if link.indent_level == node.indent_level - 1:
 						link.target = node
 						links.append(link)
 					# otherwise this link's target is the next non-indented node
 					else:
 						childless_links.append(link)
+
+				# waiting links have been linked to this node or marked childless
 				links_to_link = []
 
-				# if this is a non-indented node, it's the target for links that didn't have a target
-				if indentation_level == 0:
+				# non-indented: set as the child for any childless links
+				# TODO: distinguishing between {next} and {next timestamp}
+				if indent_level == 0:
 					for link in childless_links:
 						link.target = node
 						links.append(link)
 					childless_links = []
 
 			else:
-				print ('adding link for: "' + line + '"')
-				pp.pprint(nodes[::-1])
 				# the source is the last node in the list at one lower indent
 				for node in nodes[::-1]:
-					if node.indentation_level == indentation_level - 1:
+					if node.indent_level == indent_level - 1:
 						source_node = node
 						break
 
@@ -127,18 +131,17 @@ class Dao:
 					'id': 'link-' + str(link_counter),
 					'text': line,
 					'source': source_node,
-					'indentation_level': indentation_level
+					'indent_level': indent_level
 				})
 
 				links_to_link.append(link)
 
 				link_counter += 1
 
-			print ('----------------------------------------------------------------------------------------------------------------------------')
-
 		story = {
-			'nodes': nodes,
-			'links': links
+			'name': title,
+			'nodes': [dict(node) for node in nodes],
+			'links': [dict(link) for link in links]
 		}
-		pp.pprint(story)
-		return
+		self.save(story)
+		return self.get_story({"name":title})

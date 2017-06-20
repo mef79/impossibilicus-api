@@ -60,12 +60,16 @@ class StoryImport(Resource):
 	def __init__(self, **kwargs):
 		self.dao = kwargs['dao']
 
-	def post(self):
+	def post(self, name):
+		if name is None or len(name) < 1:
+			return error('Name required'), 400
+
 		try:
-			print (request.files)
 			assert len(request.files) == 1
 			assert len(request.files.getlist('file')) == 1
-			self.dao.import_story(request.files.get('file'))
+			result = self.dao.import_story(name, request.files.get('file'))
+			result['_id'] = str(result['_id'])
+			return result
 
 		except AssertionError:
 			if len(request.files.getlist('file')) == 0:
