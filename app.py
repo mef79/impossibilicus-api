@@ -31,7 +31,6 @@ try:
 except TypeError:
 	print ('Must enter Mongo username environment variable MONGO_USERNAME')
 	print ('Failed to start')
-	return
 
 try:
 	with Timeout(5):
@@ -39,7 +38,6 @@ try:
 except Timeout.Timeout:
 	print ('Connection to MongoDB failed, check MONGODB_URI environment variable')
 	print ('Failed to start')
-	return
 
 dao = Dao(story_collection)
 
