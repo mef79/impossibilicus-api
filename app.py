@@ -12,9 +12,9 @@ from errors import NotFoundError, UpdateError
 from resources import Home, Story, StoryList
 from util import Timeout
 
-def main():
-	app = Flask(__name__)
+app = Flask(__name__)
 
+def main():
 	# enable cross-origin requests
 	CORS(app)
 
