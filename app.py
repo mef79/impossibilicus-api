@@ -48,4 +48,6 @@ api.add_resource(StoryList, '/stories',
 	resource_class_kwargs={'dao':dao})
 api.add_resource(StoryImport, '/storyImport/<string:name>',
 	resource_class_kwargs={'dao':dao})
-app.run()
+
+if __name__ == '__main__':
+	app.run()
