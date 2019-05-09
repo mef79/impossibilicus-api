@@ -1,5 +1,5 @@
-# proj-api
-This is the simplest possible API to interact with the UI (that will soon be commited) in [proj](https://github.com/mef79/proj/)
+# impossibilicus-api
+This is the simplest possible API to interact with the UI in [impossibilicus-web](https://github.com/mef79/impossibilicus-web)
 
 ## Documentation of Libraries Used
 - [Flask](http://flask.pocoo.org/) - minimal python web framework
@@ -24,7 +24,7 @@ This is the simplest possible API to interact with the UI (that will soon be com
 - Use any REST client to make API calls (I use [Insomnia](https://insomnia.rest/))
 
 ## Deploying
-- Application is automatically deployed on Heroku when a new commit is pushed to master
+- Application is automatically deployed on Heroku when a new commit is pushed to master. The web app that interacts with this API can be found here: https://immense-oasis-52264.herokuapp.com/
 
 ## MongoDB Commands
 - Connect (requires Mongo installed): `mongo ds147510.mlab.com:47510/database_name -u username -p password`
