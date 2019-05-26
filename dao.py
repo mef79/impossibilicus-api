@@ -5,6 +5,7 @@ from werkzeug import secure_filename, FileStorage
 import os
 from link import Link
 from node import Node
+import pprint
 
 class Dao:
 	def __init__(self, collection):
@@ -46,6 +47,8 @@ class Dao:
 		# get sanitized file name
 		name = secure_filename(file.filename)
 
+		pp = pprint.PrettyPrinter(indent=4)
+
 		# save the file in the temp directory so it can be processed
 		target = os.path.join('/tmp/', name)
 		file.save(target)
@@ -56,11 +59,12 @@ class Dao:
 
 		# strip whitespace and empty lines
 		clean_lines = [line.rstrip() for line in lines if len(line.rstrip()) > 0]
-
+		pp.pprint(clean_lines)
 		node_counter = 0
 		link_counter = 0
 		nodes = []
 		links = []
+		current_type = 'node'
 
 		# links that are waiting for the next node
 		links_to_link = []
@@ -69,22 +73,25 @@ class Dao:
 		childless_links = []
 
 		for line in clean_lines:
-			# if this has no bullet/indent, it is actually a node
+			# if this has no bullet/indent, it is a node
 			if line[0] is not '*' and line[0] is not ' ':
 				current_type = 'node'
 				indent_level = 0
 
-			# one indent - is link
+			# one indent: link
 			elif line[0] is '*':
 				current_type = 'link'
 				indent_level = 1
 				line = line[1:]
 
+			# two indents: node
 			elif line[0:4] == '   *':
 				current_type = 'node'
 				indent_level = 2
 				line = line[5:]
 
+			# three indents: link
+			# TODO: refactor
 			elif line[0:7] == '      *':
 				current_type = 'link'
 				indent_level = 3
