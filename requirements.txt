@@ -7,7 +7,7 @@ click==6.7
 docx2txt==0.6
 EbookLib==0.16
 Flask==0.12.1
-Flask-Cors==3.0.2
+Flask-Cors==3.0.9
 Flask-PyMongo==0.4.1
 Flask-RESTful==0.3.5
 gunicorn==19.7.1
